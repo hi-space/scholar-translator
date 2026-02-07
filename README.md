@@ -25,19 +25,19 @@ Scientific paper PDF translation tool with **Korean language focus**, powered by
 **Quick Start:**
 
 ```bash
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Option 1: Install from PyPI (When published)
+pip install paper-translator
+export AWS_ACCESS_KEY_ID="your-key"
+export AWS_SECRET_ACCESS_KEY="your-secret"
+paper-translator your-paper.pdf
 
-# Clone and setup
+# Option 2: Development setup with uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 git clone https://github.com/your-repo/paper-pdf-translator.git
 cd paper-pdf-translator
 uv sync
-
-# Set AWS credentials
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
-
-# Translate (English → Korean by default)
 uv run paper-translator your-paper.pdf
 ```
 
@@ -220,65 +220,108 @@ Use standard Docker deployment methods or container orchestration platforms like
 <details>
   <summary>3.2.6 MCP Server (Model Context Protocol)</summary>
 
-**Paper Translator** includes an MCP server for integration with AI assistants like Claude Desktop.
+**Paper Translator** includes an MCP server for integration with AI assistants like Claude Desktop and Claude Code.
 
-1. **Start MCP server (STDIO mode):**
+### Prerequisites
 
-   ```bash
-   # With uv
-   uv run paper-translator --mcp
+Before using the MCP server, you must install the package:
 
-   # With pip installation
-   paper-translator --mcp
-   ```
+**Option A: Global Installation (Recommended for End Users)**
+```bash
+# Install with pip
+pip install paper-translator
 
-2. **Start MCP server (SSE mode):**
+# Or install with uv
+uv tool install paper-translator
 
-   ```bash
-   # With uv
-   uv run paper-translator --mcp --sse --host 127.0.0.1 --port 3001
+# Or install with pipx (isolated environment)
+pipx install paper-translator
+```
 
-   # With pip installation
-   paper-translator --mcp --sse --host 127.0.0.1 --port 3001
-   ```
+**Option B: Development Installation (For Contributors)**
+```bash
+# Clone and install in editable mode
+git clone https://github.com/your-repo/paper-pdf-translator.git
+cd paper-pdf-translator
+pip install -e .
 
-3. **Available MCP Tools:**
-   - `translate_pdf`: Translate PDF files with various options
-   - `analyze_pdf`: Analyze PDF structure without translation
-   - `configure_service`: Update translator service configuration
+# Or with uv
+uv sync
+```
 
-4. **Available MCP Resources:**
-   - `config://services`: List available translation services
-   - `config://models/{service}`: List models for a service
-   - `config://languages`: List supported language codes
+### 1. Start MCP Server Directly
 
-5. **Claude Desktop Integration:**
+**STDIO mode:**
+```bash
+paper-translator --mcp
+```
 
-   Add to your `claude_desktop_config.json`:
+**SSE mode:**
+```bash
+paper-translator --mcp --sse --host 127.0.0.1 --port 3001
+```
 
-   **With uv (Recommended):**
-   ```json
-   {
-     "mcpServers": {
-       "paper-translator": {
-         "command": "uv",
-         "args": ["--directory", "/path/to/paper-pdf-translator", "run", "paper-translator", "--mcp"]
-       }
-     }
-   }
-   ```
+### 2. Available MCP Tools
 
-   **With pip installation:**
-   ```json
-   {
-     "mcpServers": {
-       "paper-translator": {
-         "command": "paper-translator",
-         "args": ["--mcp"]
-       }
-     }
-   }
-   ```
+- `translate_pdf`: Translate PDF files with various options
+- `analyze_pdf`: Analyze PDF structure without translation
+- `configure_service`: Update translator service configuration
+
+### 3. Available MCP Resources
+
+- `config://services`: List available translation services
+- `config://models/{service}`: List models for a service
+- `config://languages`: List supported language codes
+
+### 4. Claude Desktop Integration
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "paper-translator": {
+      "command": "paper-translator",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+**Note:** This assumes you've installed the package globally using one of the methods above.
+
+### 5. Claude Code Skill Integration
+
+The skill is located at `.claude/paper-translator/` in this repository.
+
+**For End Users:**
+
+1. Install the package globally (see Prerequisites above)
+2. Copy the skill directory to your Claude Code skills location
+3. The `.mcp.json` configuration should work automatically
+
+**For Development:**
+
+If you're developing the paper-translator package and want to test local changes:
+
+1. Install in editable mode: `pip install -e .` or `uv sync`
+2. Use the same global command configuration
+3. Your local changes will be reflected immediately
+
+### Troubleshooting
+
+**"paper-translator: command not found"**
+
+The package is not installed or not in your PATH. Run one of the installation commands from Prerequisites.
+
+**"AWS Credentials Not Found"**
+
+Set your AWS credentials as environment variables or in `~/.aws/credentials`:
+```bash
+export AWS_ACCESS_KEY_ID="your-access-key"
+export AWS_SECRET_ACCESS_KEY="your-secret-key"
+export AWS_REGION="us-west-2"
+```
 
 </details>
 
@@ -386,7 +429,17 @@ Execute translation to generate two PDF files in the current directory:
 
 ### 4.5 Python API
 
-Use **Paper Translator** in your Python applications (requires installation via `uv sync` or `pip install -e .`):
+Use **Paper Translator** in your Python applications:
+
+**Installation:**
+```bash
+# From PyPI (when published)
+pip install paper-translator
+
+# Or from source (development)
+pip install -e .
+# Or: uv sync
+```
 
 ```python
 from paper_translator import translate, translate_stream
@@ -416,7 +469,19 @@ with open('example.pdf', 'rb') as f:
 
 ### 4.6 Model Context Protocol (MCP) Integration
 
-**Paper Translator** can be used as an MCP server with AI assistants (requires installation via `uv sync` or `pip install -e .`):
+**Paper Translator** can be used as an MCP server with AI assistants.
+
+**Installation:**
+```bash
+# From PyPI (when published)
+pip install paper-translator
+
+# Or from source (development)
+pip install -e .
+# Or: uv sync
+```
+
+**Usage:**
 
 ```python
 from paper_translator.mcp_server import create_mcp_app
