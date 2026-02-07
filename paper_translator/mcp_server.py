@@ -23,7 +23,7 @@ def create_mcp_app() -> FastMCP:
         lang_in: str,
         lang_out: str,
         service: str = "bedrock",
-        model: str = "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+        model: str = "global.anthropic.claude-haiku-4-5-20251001-v1:0",
         thread: int = 4,
         ctx: Context = None,
     ) -> str:
@@ -32,28 +32,19 @@ def create_mcp_app() -> FastMCP:
 
         Args:
             file: Absolute path to the input PDF file
-            lang_in: Source language code (e.g., 'en', 'ko', 'zh'). Use 'auto' for automatic detection
-            lang_out: Target language code (e.g., 'en', 'ko', 'zh')
+            lang_in: Source language code (e.g., 'en', 'ko'). Use 'auto' for automatic detection
+            lang_out: Target language code (e.g., 'en', 'ko')
             service: Translation service to use. Options:
                 - 'bedrock': AWS Bedrock (Claude models, requires AWS credentials)
-                - 'google': Google Translate (default, free)
-                - 'openai': OpenAI API (requires OPENAI_API_KEY)
-                - 'deepl': DeepL API (requires DEEPL_AUTH_KEY)
-                - 'ollama': Local Ollama (requires OLLAMA_HOST)
-                - 'azure': Azure OpenAI (requires AZURE_ENDPOINT and AZURE_API_KEY)
+                - 'google': Google Translate (free, no API key required)
             model: Model identifier for the translation service:
-                - For bedrock: Full model ID or shortcuts like 'claude-4.5-sonnet', 'claude-haiku-4.5', 'sonnet', 'haiku'
-                  Default: 'global.anthropic.claude-sonnet-4-5-20250929-v1:0'
-                - For openai: 'gpt-4', 'gpt-3.5-turbo', etc.
-                - For ollama: 'llama2', 'mistral', etc.
+                - For bedrock: Full model ID or shortcuts like 'claude-4.5-sonnet', 'claude-4.5-haiku'
+                  Default: 'global.anthropic.claude-haiku-4-5-20251001-v1:0'
             thread: Number of parallel translation threads (default: 4)
 
         Environment variables required by service:
             - bedrock: AWS_REGION, AWS_ACCESS_KEY_ID (optional if using IAM role), AWS_SECRET_ACCESS_KEY (optional)
-            - openai: OPENAI_API_KEY, OPENAI_BASE_URL (optional)
-            - deepl: DEEPL_AUTH_KEY
-            - ollama: OLLAMA_HOST, OLLAMA_MODEL
-            - azure: AZURE_ENDPOINT, AZURE_API_KEY
+            - google: None required
 
         Returns:
             Success message with paths to the generated mono and dual PDF files
@@ -197,7 +188,7 @@ Output files:
             config_manager = ConfigManager.get_instance()
 
             # Validate service name
-            valid_services = ["bedrock", "google", "openai", "deepl", "ollama", "azure"]
+            valid_services = ["bedrock", "google"]
             if service not in valid_services:
                 return f"Error: Invalid service '{service}'. Valid services: {', '.join(valid_services)}"
 
@@ -239,13 +230,9 @@ Output files:
         """List available models for a service"""
         models = {
             "bedrock": {
+                "claude-4.5-opus": "global.anthropic.claude-opus-4-5-20251101-v1:0",
                 "claude-4.5-sonnet": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-                "claude-haiku-4.5": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-                "claude-3.5-sonnet": "anthropic.claude-3-5-sonnet-20241022-v2:0",
-                "claude-3-haiku": "anthropic.claude-3-haiku-20240307-v1:0",
-                "claude-3-opus": "anthropic.claude-3-opus-20240229-v1:0",
-                "sonnet": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-                "haiku": "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+                "claude-4.5-haiku": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
             },
             "google": {
                 "default": "Google Translate does not use explicit models"
@@ -264,9 +251,6 @@ Output files:
             "ko": "Korean",
             "en": "English",
             "ja": "Japanese",
-            "zh": "Simplified Chinese",
-            "zh-CN": "Simplified Chinese",
-            "zh-TW": "Traditional Chinese",
             "fr": "French",
             "de": "German",
             "es": "Spanish",

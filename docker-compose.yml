@@ -7,7 +7,7 @@ services:
       context: .
       # All the setup steps are now part of a one-time build process.
       dockerfile_inline: |
-        FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+        FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
         WORKDIR /app
 
@@ -27,7 +27,7 @@ services:
 
         # 4. Install the local package and perform final updates/warmups.
         RUN uv pip install --system --no-cache . && \
-            uv pip install --system --no-cache -U "babeldoc<0.3.0" "pymupdf<1.25.3" "pdfminer-six==20250416" && \
+            uv pip install --system --no-cache -U "pymupdf<1.25.3" "pdfminer-six==20250416" && \
             babeldoc --warmup
 
     # The rest of the configuration is for RUNNING the built image.

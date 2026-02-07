@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 
 WORKDIR /app
 
@@ -23,6 +23,6 @@ RUN uv pip install --system --no-cache -r pyproject.toml && babeldoc --version &
 
 COPY . .
 
-RUN uv pip install --system --no-cache . && uv pip install --system --no-cache -U "babeldoc<0.3.0" "pymupdf<1.25.3" "pdfminer-six==20250416" && babeldoc --version && babeldoc --warmup
+RUN uv pip install --system --no-cache . && uv pip install --system --no-cache -U "pymupdf<1.25.3" "pdfminer-six==20250416" && babeldoc --version && babeldoc --warmup
 
 CMD ["paper-translator", "-i"]

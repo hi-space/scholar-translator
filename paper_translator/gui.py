@@ -19,30 +19,9 @@ from paper_translator.high_level import translate
 from paper_translator.doclayout import ModelInstance
 from paper_translator.config import ConfigManager
 from paper_translator.translator import (
-    AnythingLLMTranslator,
-    AzureOpenAITranslator,
-    AzureTranslator,
     BaseTranslator,
-    BingTranslator,
-    DeepLTranslator,
-    DeepLXTranslator,
-    DifyTranslator,
-    ArgosTranslator,
-    GeminiTranslator,
+    BedrockTranslator,
     GoogleTranslator,
-    ModelScopeTranslator,
-    OllamaTranslator,
-    OpenAITranslator,
-    SiliconTranslator,
-    TencentTranslator,
-    XinferenceTranslator,
-    ZhipuTranslator,
-    GrokTranslator,
-    GroqTranslator,
-    DeepseekTranslator,
-    OpenAIlikedTranslator,
-    QwenMtTranslator,
-    X302AITranslator,
 )
 from babeldoc.docvision.doclayout import OnnxModel
 from babeldoc import __version__ as babeldoc_version
@@ -52,29 +31,8 @@ logger = logging.getLogger(__name__)
 BABELDOC_MODEL = OnnxModel.load_available()
 # The following variables associate strings with translators
 service_map: dict[str, BaseTranslator] = {
+    "Bedrock": BedrockTranslator,
     "Google": GoogleTranslator,
-    "Bing": BingTranslator,
-    "DeepL": DeepLTranslator,
-    "DeepLX": DeepLXTranslator,
-    "Ollama": OllamaTranslator,
-    "Xinference": XinferenceTranslator,
-    "AzureOpenAI": AzureOpenAITranslator,
-    "OpenAI": OpenAITranslator,
-    "Zhipu": ZhipuTranslator,
-    "ModelScope": ModelScopeTranslator,
-    "Silicon": SiliconTranslator,
-    "Gemini": GeminiTranslator,
-    "Azure": AzureTranslator,
-    "Tencent": TencentTranslator,
-    "Dify": DifyTranslator,
-    "AnythingLLM": AnythingLLMTranslator,
-    "Argos Translate": ArgosTranslator,
-    "Grok": GrokTranslator,
-    "Groq": GroqTranslator,
-    "DeepSeek": DeepseekTranslator,
-    "OpenAI-liked": OpenAIlikedTranslator,
-    "Ali Qwen-Translation": QwenMtTranslator,
-    "302.AI": X302AITranslator,
 }
 
 # The following variables associate strings with specific languages
@@ -82,8 +40,6 @@ lang_map = {
     "Korean": "ko",
     "English": "en",
     "Japanese": "ja",
-    "Simplified Chinese": "zh",
-    "Traditional Chinese": "zh-TW",
     "French": "fr",
     "German": "de",
     "Russian": "ru",
@@ -119,7 +75,7 @@ if ConfigManager.get("PDF2ZH_DEMO"):
 # Limit Enabled Services
 enabled_services: T.Optional[T.List[str]] = ConfigManager.get("ENABLED_SERVICES")
 if isinstance(enabled_services, list):
-    default_services = ["Google", "Bing"]
+    default_services = ["Bedrock", "Google"]
     enabled_services_names = [str(_).lower().strip() for _ in enabled_services]
     enabled_services = [
         k
@@ -292,12 +248,14 @@ def translate_file(
     for i, env in enumerate(translator.envs.items()):
         _envs[env[0]] = envs[i]
     for k, v in _envs.items():
-        if str(k).upper().endswith("API_KEY") and str(v) == "***":
-            # Load Real API_KEYs from local configure file
-            real_keys: str = ConfigManager.get_env_by_translatername(
+        # Load from ConfigManager if value is empty, None, or masked with "***"
+        if not v or (str(k).upper().endswith("API_KEY") and str(v) == "***"):
+            # Load Real values from local configure file
+            real_value: str = ConfigManager.get_env_by_translatername(
                 translator, k, None
             )
-            _envs[k] = real_keys
+            if real_value:
+                _envs[k] = real_value
 
     print(f"Files before translation: {os.listdir(output)}")
 
@@ -326,7 +284,7 @@ def translate_file(
         "prompt": Template(prompt) if prompt else None,
         "skip_subset_fonts": skip_subset_fonts,
         "ignore_cache": ignore_cache,
-        "vfont": vfont,  # 添加自定义公式字体正则表达式
+        "vfont": vfont,  # Add custom formula font regex
         "model": ModelInstance.value,
     }
 
@@ -355,37 +313,13 @@ def translate_file(
 
 
 def babeldoc_translate_file(**kwargs):
-    from babeldoc.high_level import init as babeldoc_init
+    from babeldoc.format.pdf.high_level import init as babeldoc_init
 
     babeldoc_init()
-    from babeldoc.high_level import async_translate as babeldoc_translate
-    from babeldoc.translation_config import TranslationConfig as YadtConfig
+    from babeldoc.format.pdf.high_level import async_translate as babeldoc_translate
+    from babeldoc.format.pdf.translation_config import TranslationConfig as YadtConfig
 
-    for translator in [
-        GoogleTranslator,
-        BingTranslator,
-        DeepLTranslator,
-        DeepLXTranslator,
-        OllamaTranslator,
-        XinferenceTranslator,
-        AzureOpenAITranslator,
-        OpenAITranslator,
-        ZhipuTranslator,
-        ModelScopeTranslator,
-        SiliconTranslator,
-        GeminiTranslator,
-        AzureTranslator,
-        TencentTranslator,
-        DifyTranslator,
-        AnythingLLMTranslator,
-        ArgosTranslator,
-        GrokTranslator,
-        GroqTranslator,
-        DeepseekTranslator,
-        OpenAIlikedTranslator,
-        QwenMtTranslator,
-        X302AITranslator,
-    ]:
+    for translator in [GoogleTranslator, BedrockTranslator]:
         if kwargs["service"] == translator.name:
             translator = translator(
                 kwargs["lang_in"],
@@ -417,7 +351,7 @@ def babeldoc_translate_file(**kwargs):
             no_mono=False,
             qps=kwargs["thread"],
             use_rich_pbar=False,
-            disable_rich_text_translate=not isinstance(translator, OpenAITranslator),
+            disable_rich_text_translate=not isinstance(translator, BedrockTranslator),
             skip_clean=kwargs["skip_subset_fonts"],
             report_interval=0.5,
         )
@@ -425,7 +359,7 @@ def babeldoc_translate_file(**kwargs):
         async def yadt_translate_coro(yadt_config):
             progress_context, progress_handler = create_progress_handler(yadt_config)
 
-            # 开始翻译
+            # Start translation
             with progress_context:
                 async for event in babeldoc_translate(yadt_config):
                     progress_handler(event)
@@ -524,7 +458,7 @@ cancellation_event_map = {}
 
 # The following code creates the GUI
 with gr.Blocks(
-    title="PDFMathTranslate - PDF Translation with preserved formats",
+    title="Paper Translator - PDF Translation with preserved formats",
     theme=gr.themes.Default(
         primary_hue=custom_blue, spacing_size="md", radius_size="lg"
     ),
@@ -532,7 +466,7 @@ with gr.Blocks(
     head=demo_recaptcha if flag_demo else "",
 ) as demo:
     gr.Markdown(
-        "# [PDFMathTranslate @ GitHub](https://github.com/Byaidu/PDFMathTranslate)"
+        "# Paper Translator"
     )
 
     with gr.Row():
@@ -562,7 +496,7 @@ with gr.Blocks(
                 value=enabled_services[0],
             )
             envs = []
-            for i in range(3):
+            for i in range(4):
                 envs.append(
                     gr.Textbox(
                         visible=False,
@@ -578,7 +512,7 @@ with gr.Blocks(
                 lang_to = gr.Dropdown(
                     label="Translate to",
                     choices=lang_map.keys(),
-                    value=ConfigManager.get("PDF2ZH_LANG_TO", "Simplified Chinese"),
+                    value=ConfigManager.get("PDF2ZH_LANG_TO", "Korean"),
                 )
             page_range = gr.Radio(
                 choices=page_map.keys(),

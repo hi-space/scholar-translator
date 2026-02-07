@@ -17,9 +17,9 @@ from paper_translator.doclayout import OnnxModel, ModelInstance
 import os
 
 from paper_translator.config import ConfigManager
-from babeldoc.translation_config import TranslationConfig as YadtConfig
-from babeldoc.high_level import async_translate as yadt_translate
-from babeldoc.high_level import init as yadt_init
+from babeldoc.format.pdf.translation_config import TranslationConfig as YadtConfig
+from babeldoc.format.pdf.high_level import async_translate as yadt_translate
+from babeldoc.format.pdf.high_level import init as yadt_init
 from babeldoc.main import create_progress_handler
 
 logger = logging.getLogger(__name__)
@@ -361,56 +361,11 @@ def yadt_main(parsed_args) -> int:
             raise ValueError("prompt error.")
 
     from paper_translator.translator import (
-        AzureOpenAITranslator,
+        BedrockTranslator,
         GoogleTranslator,
-        BingTranslator,
-        DeepLTranslator,
-        DeepLXTranslator,
-        OllamaTranslator,
-        OpenAITranslator,
-        ZhipuTranslator,
-        ModelScopeTranslator,
-        SiliconTranslator,
-        GeminiTranslator,
-        AzureTranslator,
-        TencentTranslator,
-        DifyTranslator,
-        AnythingLLMTranslator,
-        XinferenceTranslator,
-        ArgosTranslator,
-        GrokTranslator,
-        GroqTranslator,
-        DeepseekTranslator,
-        OpenAIlikedTranslator,
-        QwenMtTranslator,
-        X302AITranslator,
     )
 
-    for translator in [
-        GoogleTranslator,
-        BingTranslator,
-        DeepLTranslator,
-        DeepLXTranslator,
-        OllamaTranslator,
-        XinferenceTranslator,
-        AzureOpenAITranslator,
-        OpenAITranslator,
-        ZhipuTranslator,
-        ModelScopeTranslator,
-        SiliconTranslator,
-        GeminiTranslator,
-        AzureTranslator,
-        TencentTranslator,
-        DifyTranslator,
-        AnythingLLMTranslator,
-        ArgosTranslator,
-        GrokTranslator,
-        GroqTranslator,
-        DeepseekTranslator,
-        OpenAIlikedTranslator,
-        QwenMtTranslator,
-        X302AITranslator,
-    ]:
+    for translator in [GoogleTranslator, BedrockTranslator]:
         if service_name == translator.name:
             translator = translator(
                 lang_in,
@@ -444,7 +399,7 @@ def yadt_main(parsed_args) -> int:
 
         async def yadt_translate_coro(yadt_config):
             progress_context, progress_handler = create_progress_handler(yadt_config)
-            # 开始翻译
+            # Start translation
             with progress_context:
                 async for event in yadt_translate(yadt_config):
                     progress_handler(event)

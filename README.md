@@ -25,15 +25,20 @@ Scientific paper PDF translation tool with **Korean language focus**, powered by
 **Quick Start:**
 
 ```bash
-# Install
-pip install paper-translator
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone https://github.com/your-repo/paper-pdf-translator.git
+cd paper-pdf-translator
+uv sync
 
 # Set AWS credentials
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
 
 # Translate (English → Korean by default)
-paper-translator your-paper.pdf
+uv run paper-translator your-paper.pdf
 ```
 
 <h2 id="updates">2. Recent Updates</h2>
@@ -54,7 +59,7 @@ paper-translator your-paper.pdf
 
 ### 3.1 Prerequisites
 
-- **Python**: 3.10, 3.11, or 3.12 (strictly enforced)
+- **Python**: 3.10 - 3.12 (3.13 not yet fully supported)
 - **AWS Account**: Required for default Bedrock service
   - AWS Access Key ID and Secret Access Key
   - Bedrock API access enabled in your region
@@ -63,15 +68,23 @@ paper-translator your-paper.pdf
 <h3 id="install">3.2 Installation</h3>
 
 <details open>
-  <summary>3.2.1 Install using pip (Recommended)</summary>
+  <summary>3.2.1 Install with uv (Recommended - Fast & Reliable)</summary>
 
-1. **Install the package:**
+1. **Install uv (if not already installed):**
 
    ```bash
-   pip install paper-translator
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-2. **Set up AWS credentials:**
+2. **Clone and setup:**
+
+   ```bash
+   git clone https://github.com/your-repo/paper-pdf-translator.git
+   cd paper-pdf-translator
+   uv sync
+   ```
+
+3. **Set up AWS credentials:**
 
    ```bash
    export AWS_ACCESS_KEY_ID="your-access-key"
@@ -81,23 +94,23 @@ paper-translator your-paper.pdf
 
    Or configure via `~/.aws/credentials` file.
 
-3. **Translate a PDF:**
+4. **Translate a PDF:**
 
    ```bash
    # Default: English → Korean using AWS Bedrock Claude Sonnet 4.5
-   paper-translator document.pdf
+   uv run paper-translator document.pdf
 
    # Specify languages
-   paper-translator document.pdf -li en -lo ko
+   uv run paper-translator document.pdf -li en -lo ko
 
    # Use Google Translate (no AWS required)
-   paper-translator document.pdf -s google
+   uv run paper-translator document.pdf -s google
    ```
 
 </details>
 
 <details>
-  <summary>3.2.2 Install from source</summary>
+  <summary>3.2.2 Install from source with pip</summary>
 
 1. **Clone the repository:**
 
@@ -109,23 +122,50 @@ paper-translator your-paper.pdf
 2. **Install in development mode:**
 
    ```bash
-   pip install -e .
+   # Ensure you're using Python 3.10-3.12
+   python3.12 -m pip install -e .
    ```
 
-3. **Run translation:**
+3. **Set up AWS credentials and use:**
 
    ```bash
+   export AWS_ACCESS_KEY_ID="your-access-key"
+   export AWS_SECRET_ACCESS_KEY="your-secret-key"
+   paper-translator document.pdf
+   ```
+
+</details>
+
+<details>
+  <summary>3.2.3 Install using pip from PyPI (When published)</summary>
+
+> **Note:** This method will be available once the package is published to PyPI.
+
+1. **Install the package:**
+
+   ```bash
+   pip install paper-translator
+   ```
+
+2. **Set up AWS credentials and use:**
+
+   ```bash
+   export AWS_ACCESS_KEY_ID="your-access-key"
+   export AWS_SECRET_ACCESS_KEY="your-secret-key"
    paper-translator document.pdf
    ```
 
 </details>
 <details>
-  <summary>3.2.3 Graphical User Interface (GUI)</summary>
+  <summary>3.2.4 Graphical User Interface (GUI)</summary>
 
 1. **Install and launch GUI:**
 
    ```bash
-   pip install paper-translator
+   # After installing with uv (see 3.2.1)
+   uv run paper-translator -i
+
+   # Or with pip installation
    paper-translator -i
    ```
 
@@ -147,7 +187,7 @@ paper-translator your-paper.pdf
 
 
 <details>
-  <summary>3.2.4 Docker Deployment</summary>
+  <summary>3.2.5 Docker Deployment</summary>
 
 1. **Build and run:**
 
@@ -178,19 +218,27 @@ Use standard Docker deployment methods or container orchestration platforms like
 </details>
 
 <details>
-  <summary>3.2.5 MCP Server (Model Context Protocol)</summary>
+  <summary>3.2.6 MCP Server (Model Context Protocol)</summary>
 
 **Paper Translator** includes an MCP server for integration with AI assistants like Claude Desktop.
 
 1. **Start MCP server (STDIO mode):**
 
    ```bash
+   # With uv
+   uv run paper-translator --mcp
+
+   # With pip installation
    paper-translator --mcp
    ```
 
 2. **Start MCP server (SSE mode):**
 
    ```bash
+   # With uv
+   uv run paper-translator --mcp --sse --host 127.0.0.1 --port 3001
+
+   # With pip installation
    paper-translator --mcp --sse --host 127.0.0.1 --port 3001
    ```
 
@@ -208,6 +256,19 @@ Use standard Docker deployment methods or container orchestration platforms like
 
    Add to your `claude_desktop_config.json`:
 
+   **With uv (Recommended):**
+   ```json
+   {
+     "mcpServers": {
+       "paper-translator": {
+         "command": "uv",
+         "args": ["--directory", "/path/to/paper-pdf-translator", "run", "paper-translator", "--mcp"]
+       }
+     }
+   }
+   ```
+
+   **With pip installation:**
    ```json
    {
      "mcpServers": {
@@ -222,7 +283,19 @@ Use standard Docker deployment methods or container orchestration platforms like
 </details>
 
 <details>
-  <summary>3.2.6 Troubleshooting</summary>
+  <summary>3.2.7 Troubleshooting</summary>
+
+**Dependency Resolution Issues:**
+
+If you encounter dependency conflicts with pip:
+
+```bash
+# Use uv instead (recommended)
+uv sync
+
+# Or use specific Python version with pip
+python3.12 -m pip install -e .
+```
 
 **Model Download Issues:**
 
@@ -231,7 +304,7 @@ If you encounter network difficulties downloading the DocLayout-YOLO model:
 ```bash
 # Use HuggingFace mirror
 export HF_ENDPOINT=https://hf-mirror.com
-paper-translator document.pdf
+uv run paper-translator document.pdf
 ```
 
 **AWS Bedrock Issues:**
@@ -239,15 +312,19 @@ paper-translator document.pdf
 If Bedrock fails, use Google Translate as fallback:
 
 ```bash
-paper-translator document.pdf -s google
+uv run paper-translator document.pdf -s google
 ```
 
 **Python Version Issues:**
 
-Ensure you're using Python 3.10, 3.11, or 3.12:
+Ensure you're using Python 3.10-3.12 (3.13 not yet fully supported):
 
 ```bash
 python --version
+
+# With uv (automatically manages Python version)
+uv python install 3.12
+uv python pin 3.12
 ```
 
 </details>
@@ -296,22 +373,20 @@ Execute translation to generate two PDF files in the current directory:
 
 ### 4.4 Supported Languages
 
-| Language            | Code    | Optimized |
-| ------------------- | ------- | --------- |
-| Korean              | `ko`    | ✅ Yes    |
-| English             | `en`    | ✅ Yes    |
-| Japanese            | `ja`    | ✅ Yes    |
-| Simplified Chinese  | `zh`    | Yes       |
-| Traditional Chinese | `zh-TW` | Yes       |
-| French              | `fr`    | Yes       |
-| German              | `de`    | Yes       |
-| Spanish             | `es`    | Yes       |
-| Russian             | `ru`    | Yes       |
-| Italian             | `it`    | Yes       |
+| Language            | Code    |
+| ------------------- | ------- |
+| Korean              | `ko`    |
+| English             | `en`    |
+| Japanese            | `ja`    |
+| French              | `fr`    |
+| German              | `de`    |
+| Spanish             | `es`    |
+| Russian             | `ru`    |
+| Italian             | `it`    |
 
 ### 4.5 Python API
 
-Use **Paper Translator** in your Python applications:
+Use **Paper Translator** in your Python applications (requires installation via `uv sync` or `pip install -e .`):
 
 ```python
 from paper_translator import translate, translate_stream
@@ -341,7 +416,7 @@ with open('example.pdf', 'rb') as f:
 
 ### 4.6 Model Context Protocol (MCP) Integration
 
-**Paper Translator** can be used as an MCP server with AI assistants:
+**Paper Translator** can be used as an MCP server with AI assistants (requires installation via `uv sync` or `pip install -e .`):
 
 ```python
 from paper_translator.mcp_server import create_mcp_app

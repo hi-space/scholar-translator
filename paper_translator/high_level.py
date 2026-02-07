@@ -130,7 +130,7 @@ def translate_patch(
                 pix.height, pix.width, 3
             )[:, :, ::-1]
             page_layout = model.predict(image, imgsz=int(pix.height / 32) * 32)[0]
-            # kdtree 是不可能 kdtree 的，不如直接渲染成图片，用空间换时间
+            # kdtree is not feasible; better to render directly as image, trading space for time
             box = np.ones((pix.height, pix.width))
             h, w = box.shape
             vcls = ["abandon", "figure", "table", "isolate_formula", "formula_caption"]
@@ -155,8 +155,8 @@ def translate_patch(
                     )
                     box[y0:y1, x0:x1] = 0
             layout[page.pageno] = box
-            # 新建一个 xref 存放新指令流
-            page.page_xref = doc_zh.get_new_xref()  # hack 插入页面的新 xref
+            # Create a new xref to store the new instruction stream
+            page.page_xref = doc_zh.get_new_xref()  # Hack: insert new xref for page
             doc_zh.update_object(page.page_xref, "<<>>")
             doc_zh.update_stream(page.page_xref, b"")
             doc_zh[page.pageno].set_contents(page.page_xref)
@@ -203,8 +203,8 @@ def translate_stream(
             font_id[font[0]] = page.insert_font(font[0], font[1])
     xreflen = doc_zh.xref_length()
     for xref in range(1, xreflen):
-        for label in ["Resources/", ""]:  # 可能是基于 xobj 的 res
-            try:  # xref 读写可能出错
+        for label in ["Resources/", ""]:  # May be xobj-based resources
+            try:  # xref read/write may fail
                 font_res = doc_zh.xref_get_key(xref, f"{label}Font")
                 target_key_prefix = f"{label}Font/"
                 if font_res[0] == "xref":
