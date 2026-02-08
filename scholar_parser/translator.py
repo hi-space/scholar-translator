@@ -8,8 +8,8 @@ from string import Template
 from typing import cast
 import requests
 
-from paper_translator.cache import TranslationCache
-from paper_translator.config import ConfigManager
+from scholar_parser.cache import TranslationCache
+from scholar_parser.config import ConfigManager
 
 from tenacity import retry, retry_if_not_exception_type
 from tenacity import stop_after_attempt
@@ -218,7 +218,7 @@ class BedrockTranslator(BaseTranslator):
             from botocore.exceptions import ClientError
         except ImportError:
             raise ImportError(
-                "boto3 is not installed. Install with: pip install paper-translator[bedrock]"
+                "boto3 is not installed. Install with: pip install scholar-parser[bedrock]"
             )
 
         self.set_envs(envs)

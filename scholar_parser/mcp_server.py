@@ -4,8 +4,8 @@ from mcp.server.sse import SseServerTransport
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.routing import Mount, Route
-from paper_translator import translate_stream
-from paper_translator.config import ConfigManager
+from scholar_parser import translate_stream
+from scholar_parser.config import ConfigManager
 from pathlib import Path
 import json
 
@@ -15,7 +15,7 @@ import os
 
 
 def create_mcp_app() -> FastMCP:
-    mcp = FastMCP("paper-translator")
+    mcp = FastMCP("scholar-parser")
 
     @mcp.tool()
     async def translate_pdf(
@@ -111,8 +111,8 @@ Output files:
             JSON string with PDF analysis: page count, detected languages, text regions, formulas, layout info
         """
         try:
-            from paper_translator.converter import TranslateConverter
-            from paper_translator.doclayout import OnnxModel
+            from scholar_parser.converter import TranslateConverter
+            from scholar_parser.doclayout import OnnxModel
             from pdfminer.pdfpage import PDFPage
             from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
             from pdfminer.converter import PDFPageAggregator

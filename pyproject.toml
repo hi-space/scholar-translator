@@ -1,5 +1,5 @@
 [project]
-name = "paper-translator"
+name = "scholar-parser"
 version = "1.9.11"
 description = "Scientific Paper PDF Translator with Korean Focus"
 authors = [{ name = "Byaidu", email = "byaidux@gmail.com" }]
@@ -64,7 +64,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-paper-translator = "paper_translator.cli:main"
+scholar-parser = "scholar_parser.cli:main"
 
 [tool.flake8]
 ignore = ["E203", "E261", "E501", "W503", "E741"]
@@ -81,6 +81,6 @@ version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
     'current_version = "{version}"',
     'version = "{version}"'
 ]
-"paper_translator/__init__.py" = [
+"scholar_parser/__init__.py" = [
     '__version__ = "{version}"'
 ]

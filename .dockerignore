@@ -3,8 +3,8 @@ docs
 .git
 .pre-commit-config.yaml
 uv.lock
-paper_translator_files
-gui/paper_translator_files
+scholar_parser_files
+gui/scholar_parser_files
 gradio_files
 tmp
 gui/gradio_files

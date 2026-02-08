@@ -1,9 +1,12 @@
-paper_translator_files
-gui/paper_translator_files
+scholar_parser_files
+gui/scholar_parser_files
 gradio_files
 tmp
 gui/gradio_files
 gui/tmp
+
+# MCP configuration (environment-specific)
+.claude/scholar-parser/.mcp.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

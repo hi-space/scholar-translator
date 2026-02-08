@@ -14,11 +14,11 @@ from gradio_pdf import PDF
 from string import Template
 import logging
 
-from paper_translator import __version__
-from paper_translator.high_level import translate
-from paper_translator.doclayout import ModelInstance
-from paper_translator.config import ConfigManager
-from paper_translator.translator import (
+from scholar_parser import __version__
+from scholar_parser.high_level import translate
+from scholar_parser.doclayout import ModelInstance
+from scholar_parser.config import ConfigManager
+from scholar_parser.translator import (
     BaseTranslator,
     BedrockTranslator,
     GoogleTranslator,
@@ -209,7 +209,7 @@ def translate_file(
 
     progress(0, desc="Starting translation...")
 
-    output = Path("paper_translator_files")
+    output = Path("scholar_parser_files")
     output.mkdir(parents=True, exist_ok=True)
 
     if file_type == "File":
@@ -450,7 +450,7 @@ tech_details_string = f"""
                     - GitHub: <a href="https://github.com/Byaidu/PDFMathTranslate">Byaidu/PDFMathTranslate</a><br>
                     - BabelDOC: <a href="https://github.com/funstory-ai/BabelDOC">funstory-ai/BabelDOC</a><br>
                     - GUI by: <a href="https://github.com/reycn">Rongxin</a><br>
-                    - paper-translator Version: {__version__} <br>
+                    - scholar-parser Version: {__version__} <br>
                     - BabelDOC Version: {babeldoc_version}
                 """
 cancellation_event_map = {}

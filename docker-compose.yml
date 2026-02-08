@@ -2,7 +2,7 @@
 # It builds a single, self-contained image with all dependencies.
 
 services:
-  paper-translator:
+  scholar-parser:
     build:
       context: .
       # All the setup steps are now part of a one-time build process.
@@ -39,7 +39,7 @@ services:
       # The UV_LINK_MODE warning happens during build, so we can set it there if needed,
       # but it's generally harmless.
 
-    command: ["paper-translator", "-i"]
+    command: ["scholar-parser", "-i"]
 
     # Optional: Mount a volume for persistent data I/O if needed
     # volumes:

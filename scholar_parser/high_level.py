@@ -1,4 +1,4 @@
-"""Functions that can be used for the most common use-cases for paper-translator"""
+"""Functions that can be used for the most common use-cases for scholar-parser"""
 
 import asyncio
 import io
@@ -22,11 +22,11 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
 from pymupdf import Document, Font
 
-from paper_translator.converter import TranslateConverter
-from paper_translator.doclayout import OnnxModel
-from paper_translator.pdfinterp import PDFPageInterpreterEx
+from scholar_parser.converter import TranslateConverter
+from scholar_parser.doclayout import OnnxModel
+from scholar_parser.pdfinterp import PDFPageInterpreterEx
 
-from paper_translator.config import ConfigManager
+from scholar_parser.config import ConfigManager
 from babeldoc.assets.assets import get_font_and_metadata
 
 NOTO_NAME = "noto"
