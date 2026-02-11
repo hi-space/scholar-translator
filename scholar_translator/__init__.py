@@ -1,5 +1,5 @@
 import logging
-from scholar_parser.high_level import translate, translate_stream
+from scholar_translator.high_level import translate, translate_stream
 
 log = logging.getLogger(__name__)
 

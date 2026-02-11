@@ -4,8 +4,8 @@ from mcp.server.sse import SseServerTransport
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.routing import Mount, Route
-from scholar_parser import translate_stream
-from scholar_parser.config import ConfigManager
+from scholar_translator import translate_stream
+from scholar_translator.config import ConfigManager
 from pathlib import Path
 import json
 
@@ -15,7 +15,7 @@ import os
 
 
 def create_mcp_app() -> FastMCP:
-    mcp = FastMCP("scholar-parser")
+    mcp = FastMCP("scholar-translator")
 
     @mcp.tool()
     async def translate_pdf(
@@ -31,7 +31,7 @@ def create_mcp_app() -> FastMCP:
         Translate a PDF file using various translation services.
 
         Args:
-            file: Absolute path to the input PDF file
+            file: Path to the input PDF file (can be relative or absolute)
             lang_in: Source language code (e.g., 'en', 'ko'). Use 'auto' for automatic detection
             lang_out: Target language code (e.g., 'en', 'ko')
             service: Translation service to use. Options:
@@ -46,9 +46,19 @@ def create_mcp_app() -> FastMCP:
             - bedrock: AWS_REGION, AWS_ACCESS_KEY_ID (optional if using IAM role), AWS_SECRET_ACCESS_KEY (optional)
             - google: None required
 
+        Output:
+            Creates a language-specific subfolder {filename}-{lang_out}/ in the current directory
+            containing mono and dual PDF files
+
         Returns:
             Success message with paths to the generated mono and dual PDF files
         """
+
+        # Resolve relative paths to absolute
+        file_path = Path(file).resolve()
+        if not file_path.exists():
+            return f"Error: File not found: {file}"
+        file = str(file_path)
 
         with open(file, "rb") as f:
             file_bytes = f.read()
@@ -71,8 +81,13 @@ def create_mcp_app() -> FastMCP:
 
             await ctx.log(level="info", message="Translation complete")
 
-            output_path = Path(os.path.dirname(file))
+            # Get filename without extension
             filename = os.path.splitext(os.path.basename(file))[0]
+
+            # Always create language-specific subfolder in current working directory
+            output_path = Path.cwd() / f"{filename}-{lang_out}"
+            output_path.mkdir(parents=True, exist_ok=True)
+
             doc_mono = output_path / f"{filename}-{lang_out}-mono.pdf"
             doc_dual = output_path / f"{filename}-{lang_out}-dual.pdf"
 

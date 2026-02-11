@@ -15,7 +15,7 @@ from pdfminer.utils import apply_matrix_pt, mult_matrix
 from pymupdf import Font
 from tenacity import retry, wait_fixed
 
-from scholar_parser.translator import (
+from scholar_translator.translator import (
     BaseTranslator,
     BedrockTranslator,
     GoogleTranslator,

@@ -11,12 +11,12 @@ import sys
 from string import Template
 from typing import List, Optional
 
-from scholar_parser import __version__, log
-from scholar_parser.high_level import translate, download_remote_fonts
-from scholar_parser.doclayout import OnnxModel, ModelInstance
+from scholar_translator import __version__, log
+from scholar_translator.high_level import translate, download_remote_fonts
+from scholar_translator.doclayout import OnnxModel, ModelInstance
 import os
 
-from scholar_parser.config import ConfigManager
+from scholar_translator.config import ConfigManager
 from babeldoc.format.pdf.translation_config import TranslationConfig as YadtConfig
 from babeldoc.format.pdf.high_level import async_translate as yadt_translate
 from babeldoc.format.pdf.high_level import init as yadt_init
@@ -38,7 +38,7 @@ def create_parser() -> argparse.ArgumentParser:
         "--version",
         "-v",
         action="version",
-        version=f"scholar-parser v{__version__}",
+        version=f"scholar-translator v{__version__}",
     )
     parser.add_argument(
         "--debug",
@@ -192,11 +192,11 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     parse_params.add_argument(
-        "--mcp", action="store_true", help="Launch scholar-parser MCP server in STDIO mode"
+        "--mcp", action="store_true", help="Launch scholar-translator MCP server in STDIO mode"
     )
 
     parse_params.add_argument(
-        "--sse", action="store_true", help="Launch scholar-parser MCP server in SSE mode"
+        "--sse", action="store_true", help="Launch scholar-translator MCP server in SSE mode"
     )
 
     return parser
@@ -272,7 +272,7 @@ def main(args: Optional[List[str]] = None) -> int:
         ModelInstance.value = OnnxModel.load_available()
 
     if parsed_args.interactive:
-        from scholar_parser.gui import setup_gui
+        from scholar_translator.gui import setup_gui
 
         if parsed_args.serverport:
             setup_gui(
@@ -283,13 +283,13 @@ def main(args: Optional[List[str]] = None) -> int:
         return 0
 
     if parsed_args.flask:
-        from scholar_parser.backend import flask_app
+        from scholar_translator.backend import flask_app
 
         flask_app.run(port=11008)
         return 0
 
     if parsed_args.celery:
-        from scholar_parser.backend import celery_app
+        from scholar_translator.backend import celery_app
 
         celery_app.start(argv=sys.argv[2:])
         return 0
@@ -304,7 +304,7 @@ def main(args: Optional[List[str]] = None) -> int:
 
     if parsed_args.mcp:
         logging.getLogger("mcp").setLevel(logging.ERROR)
-        from scholar_parser.mcp_server import create_mcp_app, create_starlette_app
+        from scholar_translator.mcp_server import create_mcp_app, create_starlette_app
 
         mcp = create_mcp_app()
         if parsed_args.sse:
@@ -337,9 +337,9 @@ def yadt_main(parsed_args) -> int:
     lang_in = parsed_args.lang_in
     lang_out = parsed_args.lang_out
     ignore_cache = parsed_args.ignore_cache
-    outputdir = None
+    base_output = None
     if parsed_args.output:
-        outputdir = parsed_args.output
+        base_output = parsed_args.output
 
     # yadt require init before translate
     yadt_init()
@@ -360,7 +360,7 @@ def yadt_main(parsed_args) -> int:
         except Exception:
             raise ValueError("prompt error.")
 
-    from scholar_parser.translator import (
+    from scholar_translator.translator import (
         BedrockTranslator,
         GoogleTranslator,
     )
@@ -379,9 +379,18 @@ def yadt_main(parsed_args) -> int:
     else:
         raise ValueError("Unsupported translation service")
     import asyncio
+    from pathlib import Path
+    import os
 
     for file in untranlate_file:
         file = file.strip("\"'")
+        # Calculate language-specific subfolder for babeldoc output
+        filename = os.path.splitext(os.path.basename(file))[0]
+        if base_output:
+            outputdir = str(Path(base_output) / f"{filename}-{lang_out}")
+        else:
+            outputdir = str(Path.cwd() / f"{filename}-{lang_out}")
+
         yadt_config = YadtConfig(
             input_file=file,
             font=font_path,

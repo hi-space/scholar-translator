@@ -1,14 +1,14 @@
 from flask import Flask, request, send_file
 from celery import Celery, Task
 from celery.result import AsyncResult
-from scholar_parser import translate_stream
+from scholar_translator import translate_stream
 import tqdm
 import json
 import io
-from scholar_parser.doclayout import ModelInstance
-from scholar_parser.config import ConfigManager
+from scholar_translator.doclayout import ModelInstance
+from scholar_translator.config import ConfigManager
 
-flask_app = Flask("scholar-parser")
+flask_app = Flask("scholar-translator")
 flask_app.config.from_mapping(
     CELERY=dict(
         broker_url=ConfigManager.get("CELERY_BROKER", "redis://127.0.0.1:6379/0"),

@@ -25,4 +25,4 @@ COPY . .
 
 RUN uv pip install --system --no-cache . && uv pip install --system --no-cache -U "pymupdf<1.25.3" "pdfminer-six==20250416" && babeldoc --version && babeldoc --warmup
 
-CMD ["scholar-parser", "-i"]
+CMD ["scholar-translator", "-i"]

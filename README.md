@@ -1,13 +1,15 @@
 
 <div align="center">
 
-<h2 id="title">Scholar Parser</h2>
+<h2 id="title">Scholar Translator</h2>
+
+**English** | [한국어](README.ko.md)
 
 </div>
 
 <h2 id="updates">1. What does this do?</h2>
 
-Scientific paper PDF translation tool with **Korean language focus**, powered by AWS Bedrock.
+Academic paper PDF translation tool with **Korean language focus**, powered by AWS Bedrock.
 
 - 📊 Preserve formulas, charts, table of contents, and annotations
 - 🇰🇷 **Optimized for Korean translation** with proper typography and fonts
@@ -23,20 +25,20 @@ Scientific paper PDF translation tool with **Korean language focus**, powered by
 **Quick Start:**
 
 ```bash
-# Option 1: Install from PyPI (When published)
-pip install scholar-parser
-export AWS_ACCESS_KEY_ID="your-key"
-export AWS_SECRET_ACCESS_KEY="your-secret"
-scholar-parser your-paper.pdf
-
-# Option 2: Development setup with uv
+# Install uv (if not already installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
-git clone https://github.com/your-repo/paper-pdf-translator.git
+
+# Clone and setup
+git clone https://github.com/hi-space/paper-pdf-translator.git
 cd paper-pdf-translator
 uv sync
+
+# Set up AWS credentials
 export AWS_ACCESS_KEY_ID="your-key"
 export AWS_SECRET_ACCESS_KEY="your-secret"
-uv run scholar-parser your-paper.pdf
+
+# Translate your paper
+uv run scholar-translator your-paper.pdf
 ```
 
 <h2 id="use-section">2. Installation & Usage</h2>
@@ -81,56 +83,29 @@ uv run scholar-parser your-paper.pdf
 4. **Translate a PDF:**
 
    ```bash
-   # Default: English → Korean using AWS Bedrock Claude Sonnet 4.5
-   uv run scholar-parser document.pdf
+   # Default: English → Korean using AWS Bedrock Claude Haiku 4.5
+   uv run scholar-translator document.pdf
 
    # Specify languages
-   uv run scholar-parser document.pdf -li en -lo ko
+   uv run scholar-translator document.pdf -li en -lo ko
 
    # Use Google Translate (no AWS required)
-   uv run scholar-parser document.pdf -s google
+   uv run scholar-translator document.pdf -s google
    ```
 
 </details>
 
 <details open>
-  <summary>3.2.2 Install from source with pip</summary>
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your-repo/paper-pdf-translator.git
-   cd paper-pdf-translator
-   ```
-
-2. **Install in development mode:**
-
-   ```bash
-   # Ensure you're using Python 3.10-3.12
-   python3.12 -m pip install -e .
-   ```
-
-3. **Set up AWS credentials and use:**
-
-   ```bash
-   export AWS_ACCESS_KEY_ID="your-access-key"
-   export AWS_SECRET_ACCESS_KEY="your-secret-key"
-   scholar-parser document.pdf
-   ```
-
-</details>
-
-<details open>
-  <summary>3.2.3 Graphical User Interface (GUI)</summary>
+  <summary>3.2.2 Graphical User Interface (GUI)</summary>
 
 1. **Install and launch GUI:**
 
    ```bash
    # After installing with uv (see 3.2.1)
-   uv run scholar-parser -i
+   uv run scholar-translator -i
 
    # Or with pip installation
-   scholar-parser -i
+   scholar-translator -i
    ```
 
 2. **Open in browser:**
@@ -150,7 +125,7 @@ uv run scholar-parser your-paper.pdf
 </details>
 
 <details open>
-  <summary>3.2.4 Docker Deployment</summary>
+  <summary>3.2.3 Docker Deployment</summary>
 
 1. **Build and run:**
 
@@ -161,12 +136,12 @@ uv run scholar-parser your-paper.pdf
    Or manually:
 
    ```bash
-   docker build -t scholar-parser .
+   docker build -t scholar-translator .
    docker run -d -p 7860:7860 \
      -e AWS_ACCESS_KEY_ID="your-key" \
      -e AWS_SECRET_ACCESS_KEY="your-secret" \
      -e AWS_REGION="us-west-2" \
-     scholar-parser
+     scholar-translator
    ```
 
 2. **Access GUI:**
@@ -181,7 +156,7 @@ Use standard Docker deployment methods or container orchestration platforms like
 </details>
 
 <details open>
-  <summary>3.2.5 MCP Server (Model Context Protocol)</summary>
+  <summary>3.2.4 MCP Server (Model Context Protocol)</summary>
 
 **Scholar Parser** includes an MCP server for integration with AI assistants like Claude Desktop and Claude Code.
 
@@ -192,13 +167,13 @@ Before using the MCP server, you must install the package:
 **Option A: Global Installation (Recommended for End Users)**
 ```bash
 # Install with pip
-pip install scholar-parser
+pip install scholar-translator
 
 # Or install with uv
-uv tool install scholar-parser
+uv tool install scholar-translator
 
 # Or install with pipx (isolated environment)
-pipx install scholar-parser
+pipx install scholar-translator
 ```
 
 **Option B: Development Installation (For Contributors)**
@@ -216,12 +191,12 @@ uv sync
 
 **STDIO mode:**
 ```bash
-scholar-parser --mcp
+scholar-translator --mcp
 ```
 
 **SSE mode:**
 ```bash
-scholar-parser --mcp --sse --host 127.0.0.1 --port 3001
+scholar-translator --mcp --sse --host 127.0.0.1 --port 3001
 ```
 
 ### 2. Available MCP Tools
@@ -243,8 +218,8 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "scholar-parser": {
-      "command": "scholar-parser",
+    "scholar-translator": {
+      "command": "scholar-translator",
       "args": ["--mcp"]
     }
   }
@@ -255,7 +230,7 @@ Add to your `claude_desktop_config.json`:
 
 ### Troubleshooting
 
-**"scholar-parser: command not found"**
+**"scholar-translator: command not found"**
 
 The package is not installed or not in your PATH. Run one of the installation commands from Prerequisites.
 
@@ -271,7 +246,7 @@ export AWS_REGION="us-west-2"
 </details>
 
 <details>
-  <summary>3.2.7 Troubleshooting</summary>
+  <summary>3.2.5 Troubleshooting</summary>
 
 **Dependency Resolution Issues:**
 
@@ -292,7 +267,7 @@ If you encounter network difficulties downloading the DocLayout-YOLO model:
 ```bash
 # Use HuggingFace mirror
 export HF_ENDPOINT=https://hf-mirror.com
-uv run scholar-parser document.pdf
+uv run scholar-translator document.pdf
 ```
 
 **AWS Bedrock Issues:**
@@ -300,7 +275,7 @@ uv run scholar-parser document.pdf
 If Bedrock fails, use Google Translate as fallback:
 
 ```bash
-uv run scholar-parser document.pdf -s google
+uv run scholar-translator document.pdf -s google
 ```
 
 **Python Version Issues:**
@@ -317,40 +292,91 @@ uv python pin 3.12
 
 </details>
 
+<details>
+  <summary>3.2.6 Alternative: pip Installation</summary>
+
+If you cannot use `uv`, you can install with `pip`:
+
+**From PyPI (when published):**
+```bash
+pip install scholar-translator
+```
+
+**From source:**
+```bash
+git clone https://github.com/hi-space/paper-pdf-translator.git
+cd paper-pdf-translator
+python3.12 -m pip install -e .
+```
+
+**Note:** `uv` is the recommended installation method for better dependency management and faster performance.
+
+</details>
+
 
 <h2 id="usage">4. Usage Guide</h2>
 
 ### 4.1 Basic Usage
 
-Execute translation to generate two PDF files in the current directory:
-- `document-ko-mono.pdf`: Translated only (default: Korean)
-- `document-ko-dual.pdf`: Bilingual (Original + Translated text)
+Execute translation to generate a language-specific subfolder with two PDF files:
+
+```bash
+scholar-translator document.pdf -lo ko
+```
+
+**Output structure:**
+```
+./document-ko/
+  ├── document-ko-mono.pdf  # Translated only
+  └── document-ko-dual.pdf  # Bilingual (original + translation)
+```
+
+- `{filename}-{lang}-mono.pdf`: Translated text only (default: Korean)
+- `{filename}-{lang}-dual.pdf`: Bilingual (original + translated text)
+- Output subfolder: `{filename}-{lang}/` (e.g., `document-ko/` for Korean translation)
+
+**Multiple language translations:**
+```bash
+scholar-translator document.pdf -lo ko  # Creates document-ko/ subfolder
+scholar-translator document.pdf -lo ja  # Creates document-ja/ subfolder
+```
+
+**Output structure with multiple languages:**
+```
+./document-ko/
+  ├── document-ko-mono.pdf
+  └── document-ko-dual.pdf
+./document-ja/
+  ├── document-ja-mono.pdf
+  └── document-ja-dual.pdf
+```
 
 **Default behavior:**
 - Source language: Auto-detect
 - Target language: Korean
-- Translation service: AWS Bedrock (Claude Sonnet 4.5)
+- Translation service: AWS Bedrock (Claude Haiku 4.5)
+- Output: Language-specific subfolders created automatically
 
 ### 4.2 Command Line Options
 
 | Option                | Function                          | Example                                           |
 | --------------------- | --------------------------------- | ------------------------------------------------- |
-| `files`               | Local PDF file(s)                 | `scholar-parser document.pdf`                   |
-| `-i`                  | Launch GUI                        | `scholar-parser -i`                             |
-| `-li`                 | Source language (default: auto)   | `scholar-parser doc.pdf -li en`                 |
-| `-lo`                 | Target language (default: ko)     | `scholar-parser doc.pdf -lo ja`                 |
-| `-s`                  | Translation service               | `scholar-parser doc.pdf -s google`              |
-| `-m`                  | Model name/shortcut               | `scholar-parser doc.pdf -m haiku`               |
-| `-t`                  | Number of threads (default: 4)    | `scholar-parser doc.pdf -t 8`                   |
-| `-o`                  | Output directory                  | `scholar-parser doc.pdf -o output/`             |
-| `-p`                  | Page range                        | `scholar-parser doc.pdf -p 1-5`                 |
-| `-f`                  | Font regex for formula detection  | `scholar-parser doc.pdf -f "(MS.*)"`            |
-| `-c`                  | Char regex for formula detection  | `scholar-parser doc.pdf -c "[0-9]"`             |
-| `--ignore-cache`      | Disable translation cache         | `scholar-parser doc.pdf --ignore-cache`         |
-| `--skip-subset-fonts` | Skip font subsetting              | `scholar-parser doc.pdf --skip-subset-fonts`    |
-| `--config`            | Load config file                  | `scholar-parser --config config.json`           |
-| `--mcp`               | Start MCP server (STDIO)          | `scholar-parser --mcp`                          |
-| `--mcp --sse`         | Start MCP server (SSE)            | `scholar-parser --mcp --sse --port 3001`        |
+| `files`               | Local PDF file(s)                 | `scholar-translator document.pdf`                   |
+| `-i`                  | Launch GUI                        | `scholar-translator -i`                             |
+| `-li`                 | Source language (default: auto)   | `scholar-translator doc.pdf -li en`                 |
+| `-lo`                 | Target language (default: ko)     | `scholar-translator doc.pdf -lo ja`                 |
+| `-s`                  | Translation service               | `scholar-translator doc.pdf -s google`              |
+| `-m`                  | Model name/shortcut               | `scholar-translator doc.pdf -m haiku`               |
+| `-t`                  | Number of threads (default: 4)    | `scholar-translator doc.pdf -t 8`                   |
+| `-o`                  | Output directory                  | `scholar-translator doc.pdf -o output/`             |
+| `-p`                  | Page range                        | `scholar-translator doc.pdf -p 1-5`                 |
+| `-f`                  | Font regex for formula detection  | `scholar-translator doc.pdf -f "(MS.*)"`            |
+| `-c`                  | Char regex for formula detection  | `scholar-translator doc.pdf -c "[0-9]"`             |
+| `--ignore-cache`      | Disable translation cache         | `scholar-translator doc.pdf --ignore-cache`         |
+| `--skip-subset-fonts` | Skip font subsetting              | `scholar-translator doc.pdf --skip-subset-fonts`    |
+| `--config`            | Load config file                  | `scholar-translator --config config.json`           |
+| `--mcp`               | Start MCP server (STDIO)          | `scholar-translator --mcp`                          |
+| `--mcp --sse`         | Start MCP server (SSE)            | `scholar-translator --mcp --sse --port 3001`        |
 
 ### 4.3 Translation Services
 
@@ -374,20 +400,19 @@ Execute translation to generate two PDF files in the current directory:
 
 ### 4.5 Python API
 
-Use **Scholar Parser** in your Python applications:
+Use **Scholar Translator** in your Python applications:
 
 **Installation:**
 ```bash
-# From PyPI (when published)
-pip install scholar-parser
+# Recommended: with uv
+uv sync
 
-# Or from source (development)
-pip install -e .
-# Or: uv sync
+# Alternative: from PyPI (when published)
+pip install scholar-translator
 ```
 
 ```python
-from scholar_parser import translate, translate_stream
+from scholar_translator import translate, translate_stream
 
 # Translate files
 params = {
@@ -399,37 +424,44 @@ params = {
 }
 
 # Translate local file
+# Returns paths to generated PDFs: ('example-ko/example-ko-mono.pdf', 'example-ko/example-ko-dual.pdf')
+# Note: Automatically creates language-specific subfolder 'example-ko/'
 (file_mono, file_dual) = translate(files=['example.pdf'], **params)[0]
 
 # Translate from bytes
 with open('example.pdf', 'rb') as f:
     (stream_mono, stream_dual) = translate_stream(stream=f.read(), **params)
 
-    # Save outputs
+    # Save outputs manually
     with open('output-mono.pdf', 'wb') as out:
         out.write(stream_mono)
     with open('output-dual.pdf', 'wb') as out:
         out.write(stream_dual)
 ```
 
+**Output structure:**
+- The `translate()` function automatically creates a language-specific subfolder: `{filename}-{lang_out}/`
+- Output files include language code: `{filename}-{lang_out}-mono.pdf` and `{filename}-{lang_out}-dual.pdf`
+- The `translate_stream()` function returns bytes that you can save anywhere
+
+
 ### 4.6 Model Context Protocol (MCP) Integration
 
-**Scholar Parser** can be used as an MCP server with AI assistants.
+**Scholar Translator** can be used as an MCP server with AI assistants.
 
 **Installation:**
 ```bash
-# From PyPI (when published)
-pip install scholar-parser
+# Recommended: with uv
+uv sync
 
-# Or from source (development)
-pip install -e .
-# Or: uv sync
+# Alternative: from PyPI (when published)
+pip install scholar-translator
 ```
 
 **Usage:**
 
 ```python
-from scholar_parser.mcp_server import create_mcp_app
+from scholar_translator.mcp_server import create_mcp_app
 
 # Create MCP application
 mcp = create_mcp_app()
@@ -449,14 +481,7 @@ mcp = create_mcp_app()
 
 ### 5.1 About This Project
 
-**Scholar Parser** is a fork of [PDFMathTranslate](https://github.com/Byaidu/PDFMathTranslate), optimized for Korean language translation with AWS Bedrock integration.
-
-**Key Differences from Original:**
-- 🇰🇷 **Korean-first approach**: Default target language is Korean
-- ☁️ **AWS Bedrock**: Claude Sonnet 4.5 as default translator
-- 🔧 **Enhanced MCP**: Extended Model Context Protocol support
-- 📦 **Simplified**: Focused on Bedrock + Google Translate only
-- 🎯 **Typography**: Optimized Korean font rendering
+**Scholar Translator** is a fork of [PDFMathTranslate](https://github.com/Byaidu/PDFMathTranslate), optimized for Korean language translation with AWS Bedrock integration.
 
 **Original Project Citation:**
 
@@ -473,7 +498,7 @@ The original PDFMathTranslate was accepted by [EMNLP 2025](https://aclanthology.
 ```
 ### 5.2 Acknowledgements
 
-**Scholar Parser** is built on top of excellent open-source projects:
+**Scholar Translator** is built on top of excellent open-source projects:
 
 #### Core Technologies
 - **[PDFMathTranslate](https://github.com/Byaidu/PDFMathTranslate)**: Original project foundation
@@ -494,11 +519,7 @@ The original PDFMathTranslate was accepted by [EMNLP 2025](https://aclanthology.
 
 This project is licensed under the **AGPL-3.0 License** - see the [LICENSE](LICENSE) file for details.
 
-### 5.4 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-### 5.5 Related Projects
+### 5.4 Related Projects
 
 - **[PDFMathTranslate](https://github.com/Byaidu/PDFMathTranslate)**: Original Chinese-focused version
 - **[PDFMathTranslate-next](https://github.com/PDFMathTranslate/PDFMathTranslate-next)**: Enhanced fork with improved compatibility

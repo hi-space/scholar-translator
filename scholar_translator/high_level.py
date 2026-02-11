@@ -1,4 +1,4 @@
-"""Functions that can be used for the most common use-cases for scholar-parser"""
+"""Functions that can be used for the most common use-cases for scholar-translator"""
 
 import asyncio
 import io
@@ -22,11 +22,11 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFParser
 from pymupdf import Document, Font
 
-from scholar_parser.converter import TranslateConverter
-from scholar_parser.doclayout import OnnxModel
-from scholar_parser.pdfinterp import PDFPageInterpreterEx
+from scholar_translator.converter import TranslateConverter
+from scholar_translator.doclayout import OnnxModel
+from scholar_translator.pdfinterp import PDFPageInterpreterEx
 
-from scholar_parser.config import ConfigManager
+from scholar_translator.config import ConfigManager
 from babeldoc.assets.assets import get_font_and_metadata
 
 NOTO_NAME = "noto"
@@ -384,8 +384,26 @@ def translate(
             s_raw,
             **locals(),
         )
-        file_mono = Path(output) / f"{filename}-mono.pdf"
-        file_dual = Path(output) / f"{filename}-dual.pdf"
+
+        # Determine base output directory
+        if output:
+            base_output = Path(output)
+        else:
+            base_output = Path.cwd()  # Use current working directory
+
+        # Always create language-specific subfolder
+        output_dir = base_output / f"{filename}-{lang_out}"
+        try:
+            output_dir.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            logger.error(f"Permission denied creating directory: {output_dir}")
+            raise PDFValueError(f"Cannot create output directory {output_dir}: Permission denied")
+        except OSError as e:
+            logger.error(f"Error creating directory {output_dir}: {e}")
+            raise PDFValueError(f"Cannot create output directory {output_dir}: {e}")
+
+        file_mono = output_dir / f"{filename}-{lang_out}-mono.pdf"
+        file_dual = output_dir / f"{filename}-{lang_out}-dual.pdf"
         doc_mono = open(file_mono, "wb")
         doc_dual = open(file_dual, "wb")
         doc_mono.write(s_mono)

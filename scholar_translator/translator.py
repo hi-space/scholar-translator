@@ -8,8 +8,8 @@ from string import Template
 from typing import cast
 import requests
 
-from scholar_parser.cache import TranslationCache
-from scholar_parser.config import ConfigManager
+from scholar_translator.cache import TranslationCache
+from scholar_translator.config import ConfigManager
 
 from tenacity import retry, retry_if_not_exception_type
 from tenacity import stop_after_attempt

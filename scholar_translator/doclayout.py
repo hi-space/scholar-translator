@@ -19,7 +19,7 @@ except ImportError as e:
 
 from huggingface_hub import hf_hub_download
 
-from scholar_parser.config import ConfigManager
+from scholar_translator.config import ConfigManager
 
 
 class DocLayoutModel(abc.ABC):

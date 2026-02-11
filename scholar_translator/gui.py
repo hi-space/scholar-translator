@@ -14,11 +14,11 @@ from gradio_pdf import PDF
 from string import Template
 import logging
 
-from scholar_parser import __version__
-from scholar_parser.high_level import translate
-from scholar_parser.doclayout import ModelInstance
-from scholar_parser.config import ConfigManager
-from scholar_parser.translator import (
+from scholar_translator import __version__
+from scholar_translator.high_level import translate
+from scholar_translator.doclayout import ModelInstance
+from scholar_translator.config import ConfigManager
+from scholar_translator.translator import (
     BaseTranslator,
     BedrockTranslator,
     GoogleTranslator,
@@ -227,8 +227,6 @@ def translate_file(
 
     filename = os.path.splitext(os.path.basename(file_path))[0]
     file_raw = output / f"{filename}.pdf"
-    file_mono = output / f"{filename}-mono.pdf"
-    file_dual = output / f"{filename}-dual.pdf"
 
     translator = service_map[service]
     if page_range != "Others":
@@ -243,6 +241,11 @@ def translate_file(
                 selected_page.append(int(p) - 1)
     lang_from = lang_map[lang_from]
     lang_to = lang_map[lang_to]
+
+    # Create language-specific subfolder for outputs
+    output_subfolder = output / f"{filename}-{lang_to}"
+    file_mono = output_subfolder / f"{filename}-{lang_to}-mono.pdf"
+    file_dual = output_subfolder / f"{filename}-{lang_to}-dual.pdf"
 
     _envs = {}
     for i, env in enumerate(translator.envs.items()):
@@ -337,11 +340,15 @@ def babeldoc_translate_file(**kwargs):
 
     for file in kwargs["files"]:
         file = file.strip("\"'")
+        # Calculate language-specific subfolder for babeldoc output
+        filename = os.path.splitext(os.path.basename(file))[0]
+        output_subfolder = Path(kwargs["output"]) / f"{filename}-{kwargs['lang_out']}"
+
         yadt_config = YadtConfig(
             input_file=file,
             font=None,
             pages=",".join((str(x) for x in getattr(kwargs, "raw_pages", []))),
-            output_dir=kwargs["output"],
+            output_dir=str(output_subfolder),
             doc_layout_model=BABELDOC_MODEL,
             translator=translator,
             debug=False,
