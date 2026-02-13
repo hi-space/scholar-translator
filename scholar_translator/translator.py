@@ -218,7 +218,7 @@ class BedrockTranslator(BaseTranslator):
             from botocore.exceptions import ClientError
         except ImportError:
             raise ImportError(
-                "boto3 is not installed. Install with: pip install scholar-parser[bedrock]"
+                "boto3 is not installed. Install with: pip install scholar-translator[bedrock]"
             )
 
         self.set_envs(envs)

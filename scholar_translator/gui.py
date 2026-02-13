@@ -457,7 +457,7 @@ tech_details_string = f"""
                     - GitHub: <a href="https://github.com/Byaidu/PDFMathTranslate">Byaidu/PDFMathTranslate</a><br>
                     - BabelDOC: <a href="https://github.com/funstory-ai/BabelDOC">funstory-ai/BabelDOC</a><br>
                     - GUI by: <a href="https://github.com/reycn">Rongxin</a><br>
-                    - scholar-parser Version: {__version__} <br>
+                    - scholar-translator Version: {__version__} <br>
                     - BabelDOC Version: {babeldoc_version}
                 """
 cancellation_event_map = {}

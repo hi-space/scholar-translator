@@ -28,8 +28,8 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 클론 및 설치
-git clone https://github.com/hi-space/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/hi-space/scholar-translator.git
+cd scholar-translator
 uv sync
 
 # AWS 인증 정보 설정
@@ -64,8 +64,8 @@ uv run scholar-translator your-paper.pdf
 2. **클론 및 설정:**
 
    ```bash
-   git clone https://github.com/hi-space/paper-pdf-translator.git
-   cd paper-pdf-translator
+   git clone https://github.com/hi-space/scholar-translator.git
+   cd scholar-translator
    uv sync
    ```
 
@@ -178,8 +178,8 @@ pipx install scholar-translator
 **옵션 B: 개발 설치 (기여자용)**
 ```bash
 # 클론 및 편집 가능 모드로 설치
-git clone https://github.com/hi-space/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/hi-space/scholar-translator.git
+cd scholar-translator
 pip install -e .
 
 # 또는 uv로
@@ -303,8 +303,8 @@ pip install scholar-translator
 
 **소스에서:**
 ```bash
-git clone https://github.com/hi-space/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/hi-space/scholar-translator.git
+cd scholar-translator
 python3.12 -m pip install -e .
 ```
 

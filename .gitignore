@@ -6,7 +6,7 @@ gui/gradio_files
 gui/tmp
 
 # MCP configuration (environment-specific)
-.claude/scholar-parser/.mcp.json
+.claude/scholar-translator/.mcp.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -29,8 +29,8 @@ Academic paper PDF translation tool with **Korean language focus**, powered by A
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone and setup
-git clone https://github.com/hi-space/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/hi-space/scholar-translator.git
+cd scholar-translator
 uv sync
 
 # Set up AWS credentials
@@ -65,8 +65,8 @@ uv run scholar-translator your-paper.pdf
 2. **Clone and setup:**
 
    ```bash
-   git clone https://github.com/your-repo/paper-pdf-translator.git
-   cd paper-pdf-translator
+   git clone https://github.com/your-repo/scholar-translator.git
+   cd scholar-translator
    uv sync
    ```
 
@@ -179,8 +179,8 @@ pipx install scholar-translator
 **Option B: Development Installation (For Contributors)**
 ```bash
 # Clone and install in editable mode
-git clone https://github.com/your-repo/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/your-repo/scholar-translator.git
+cd scholar-translator
 pip install -e .
 
 # Or with uv
@@ -304,8 +304,8 @@ pip install scholar-translator
 
 **From source:**
 ```bash
-git clone https://github.com/hi-space/paper-pdf-translator.git
-cd paper-pdf-translator
+git clone https://github.com/hi-space/scholar-translator.git
+cd scholar-translator
 python3.12 -m pip install -e .
 ```
 
