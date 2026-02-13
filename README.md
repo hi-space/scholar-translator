@@ -3,7 +3,7 @@
 
 <h2 id="title">Scholar Translator</h2>
 
-**English** | [한국어](README.ko.md)
+**English** | [한국어](README_ko.md)
 
 </div>
 
